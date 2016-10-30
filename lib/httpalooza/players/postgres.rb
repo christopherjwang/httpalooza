@@ -1,9 +1,9 @@
-require 'pg'
-
 module HTTPalooza
   module Players
     class PostgresPlayer < Base
-      introducing! :postgres, %w[ httpclient ]
+      introducing! :postgres, %w[pg]
+
+      DATABASE_NAME = 'httpalooza'
 
       def response
         raise("I don't think Postgres supports request headers...") unless request.headers.empty?
@@ -59,16 +59,16 @@ module HTTPalooza
             request.payload
           end
         else
-          ""
+          ''
         end
       end
 
       def conn
         return @conn if @conn
         begin
-          @conn ||= PG.connect(:dbname => 'httpalooza')
+          @conn ||= PG.connect(:dbname => DATABASE_NAME)
         rescue PG::ConnectionBad
-          raise('Cannot connect to database: httpalooza')
+          raise("Cannot connect to database: #{DATABASE_NAME}")
         end
       end
     end
